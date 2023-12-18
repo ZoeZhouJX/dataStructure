@@ -1,7 +1,7 @@
 #ifndef __DYNAMIC_ARRAY_H_
 #define __DYNAMIC_ARRAY_H_
 
-typedef int ELEMENTTYPE;
+typedef  ELEMENTTYPE;
 //避免头文件重复包含
 typedef struct dynamicArray
 {
@@ -41,5 +41,8 @@ int dynamicArrayGetSize(dynamicArray *pArray, int *pSize);
 
 //获取数组的容量
 int dynamicArrayGetCapacity(dynamicArray *pArray, int *pCapacity);
+
+//获取指定位置的元素数据
+int dynamicArrayGetAppointPosVal(dynamicArray *pArray, int pos, ELEMENTTYPE *pVal);
 
 #endif //__DYNAMIC_ARRAY_H_

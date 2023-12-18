@@ -1,4 +1,4 @@
-#include <dynamicArray.h>
+#include "dynamicArray.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -203,7 +203,7 @@ int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos)
     //数据前移
     for (int idx = pos; idx < pArray->len; idx++)
     {
-        pArray->data[idx] = pArray->[idx + 1];
+        pArray->data[idx] = pArray->data[idx + 1];
     }
     //更新数组大小
     (pArray->len)--;
@@ -275,6 +275,26 @@ int dynamicArrayGetCapacity(dynamicArray *pArray, int *pCapacity)
     if (pCapacity != NULL)
     {
         *pCapacity = pArray->capacity;
+    }
+    return ON_SUCCESS;
+}
+
+// 获取指定位置的元素数据
+int dynamicArrayGetAppointPosVal(dynamicArray *pArray, int pos, ELEMENTTYPE *pVal)
+{
+    //判空
+    if (pArray == NULL)
+    {
+        return NULL_PTR;
+    }
+    //判断位置的合法性
+    if (pos < 0 || pos >= pArray->len)
+    {
+        return INVALID_ACCESS;
+    }
+    if (pVal)
+    {
+        *pVal = pArray->data[pos];
     }
     return ON_SUCCESS;
 }
