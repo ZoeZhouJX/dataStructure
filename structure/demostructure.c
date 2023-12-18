@@ -82,7 +82,8 @@ int main()
     stu.weight = 50;
     stu.sex = 'm';
     stu.height = 180;
-    strncpy(stu.name, "zhangsan", sizeof(stu) - 1);
+    //stu.name = "zhangsan";  不能对首地址进行赋值
+    strncpy(stu.name, "zhangsan", sizeof(stu.name) - 1);
     printf("stu.age:%d\t, stu.height:%d\t, stu.sex:%d\t, stu.weight:%d\t, stu.name:%s\n",stu.age, stu.height, stu.sex, stu.weight, stu.name);
 #endif
 
