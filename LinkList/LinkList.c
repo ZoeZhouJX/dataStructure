@@ -1,6 +1,7 @@
 #include "LinkList.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 // 状态码
 enum STATUS_CODE
@@ -168,15 +169,15 @@ int LinkListDeleteAppointPos(LinkList *pList, int pos)
         //需要修改尾指针
         flag = 1;
     }
-    LinkNode *needDelNote = NULL;
+    LinkNode * needDelNode = NULL;
     while (--pos)
     {
         //向后移动位置
         travelNode = travelNode->next;
     }
     //跳出循环找到的是哪一个结点
-    LinkNode * needDelNote = travelNode->next;
-    travelNode->next = needDelNote->next;
+    needDelNode = travelNode->next;
+    travelNode->next = needDelNode->next;
 
     if (flag)
     {
@@ -185,10 +186,10 @@ int LinkListDeleteAppointPos(LinkList *pList, int pos)
     }
 
     //释放内存
-    if (needDelNote != NULL)
+    if (needDelNode != NULL)
     {
-        free(needDelNote);
-        needDelNote = NULL;
+        free(needDelNode);
+        needDelNode = NULL;
     }
 
     //链表长度减一
@@ -283,7 +284,7 @@ int LinkListDestroy(LinkList *pList)
 }
 
 // 链表遍历接口
-int LinkListForeach(LinkList *pList)
+int LinkListForeach(LinkList *pList, int (*printFunc)(ELEMENTTYPE))
 {
     if (pList == NULL)
     {
@@ -303,7 +304,12 @@ int LinkListForeach(LinkList *pList)
     LinkNode *travelNode = pList->head->next;
     while (travelNode != NULL)
     {
+#if 0
         printf("travelNode->data:%d\n", travelNode->data);
+#else
+        //包装器 . 钩子 . 回调函数
+        printFunc(travelNode->data);
+#endif
         travelNode = travelNode->next;
     }
 #endif
