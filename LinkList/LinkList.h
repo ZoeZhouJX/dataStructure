@@ -18,7 +18,7 @@ typedef struct LinkNode
 typedef struct LinkList
 {
     //链表的虚拟头结点
-    LinkNode *head;
+    LinkNode * head;
 
     //链表的长度
     int len;
