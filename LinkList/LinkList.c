@@ -161,15 +161,28 @@ int LinkListDeleteAppointPos(LinkList *pList, int pos)
     LinkNode * travelNode = pList->head->next;
 #endif
 
+    int flag = 0;
+    //需要修改尾指针
+    if (pos == pList->len)
+    {
+        //需要修改尾指针
+        flag = 1;
+    }
+    LinkNode *needDelNote = NULL;
     while (--pos)
     {
         //向后移动位置
         travelNode = travelNode->next;
-        //pos--;
     }
     //跳出循环找到的是哪一个结点
     LinkNode * needDelNote = travelNode->next;
     travelNode->next = needDelNote->next;
+
+    if (flag)
+    {
+        //调整尾指针
+        pList->tail = travelNode;
+    }
 
     //释放内存
     if (needDelNote != NULL)
@@ -208,7 +221,7 @@ static int LinkListAccordAppointValGetPos(LinkList *pList, ELEMENTTYPE val, int 
         travelNode = travelNode->next;
         pos++;
     }
-    
+
     return NOT_FIND;
 }
 
