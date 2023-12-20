@@ -152,5 +152,31 @@ int LinkListDestroy(LinkList *pList)
 // 链表遍历接口
 int LinkListForeach(LinkList *pList)
 {
+    if (pList == NULL)
+    {
+        return NULL_PTR;
+    }
 
+#if 0
+    //travelNode为虚拟头结点
+    LinkNode * travelNode = pList->head;
+    while (travelNode->next != NULL)
+    {
+        travelNode = travelNode->next;
+        printf("travelNode->data:%d\n", travelNode->data);
+    }
+#else
+    //travelNode指向链表第一个元素
+    LinkNode *travelNode = pList->head->next;
+    while (travelNode != NULL)
+    {
+        travelNode = travelNode->next;
+        printf("travelNode->data:%d\n", travelNode->data);
+        travelNode = travelNode->next;
+    }
+#endif
+
+    return ON_SUCCESS;
+
+    
 }
