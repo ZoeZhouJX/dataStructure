@@ -85,6 +85,7 @@ static int expandDynamicCapacity(dynamicArray *pArray)
 
     return ret;
 }
+
 // 动态数组插入数据，在指定位置插入
 int dynamicArrayAppointPosInsertData(dynamicArray *pArray, int pos, ELEMENTTYPE val)
 {
@@ -128,7 +129,7 @@ int dynamicArrayAppointPosInsertData(dynamicArray *pArray, int pos, ELEMENTTYPE 
     return ON_SUCCESS;
 }
 
-// 动态数组修改指定位置的数组
+// 动态数组修改指定位置的数据
 int dynamicArrayModifyAppointPosData(dynamicArray *pArray, int pos, ELEMENTTYPE val)
 {
     if (pArray == NULL)
@@ -183,6 +184,7 @@ static int shrinkDynamicCapacity(dynamicArray *pArray)
     return ON_SUCCESS;
 
 }
+
 // 动态数组删除指定位置数据
 int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos)
 {
@@ -211,7 +213,7 @@ int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos)
 }
 
 // 动态数组删除指定的元素
-int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val)
+int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2))
 {
 #if 0
     for (int idx = 0; idx < pArray->len; idx++)
@@ -224,10 +226,18 @@ int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val)
 #else
     for (int idx = pArray->len - 1; idx >= 0;idx--)
     {
-        if (val == pArray->data[idx])
+        #if 0 
+        if (*(int *)val == *(int *)(pArray->data[idx]))
+            {
+                dynamicArrayDeleteAppointPosData(pArray, idx);
+            }
+        #else
+        int ret = compareFunc(val, pArray->data[idx]);
+        if (ret == 1)
         {
             dynamicArrayDeleteAppointPosData(pArray, idx);
         }
+        #endif
     }
 #endif
     return ON_SUCCESS;
@@ -261,7 +271,7 @@ int dynamicArrayGetSize(dynamicArray *pArray, int *pSize)
     {
         *pSize = pArray->len;
     }
-    return ON_SUCCESS;
+    return pArray->len;
 }
 
 // 获取数组的容量
@@ -297,4 +307,12 @@ int dynamicArrayGetAppointPosVal(dynamicArray *pArray, int pos, ELEMENTTYPE *pVa
         *pVal = pArray->data[pos];
     }
     return ON_SUCCESS;
+}
+
+//数组排序
+int dynamicArrayAppointWaySort(dynamicArray *pArray, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2))
+{
+    int ret = 0;
+
+    return ret;
 }

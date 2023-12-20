@@ -53,7 +53,6 @@ int printStruct(const stuInfo *stu)
 {
     // 栈空间小的很，不允许超过8M
     // 结构体必须用指针 省内存空间
-    int ret = 0;
     int len = sizeof(stu);
     printf("len:%d\n", len);
     return 0;
@@ -115,7 +114,7 @@ int main()
     printf("stu.age:%d\t, stu.weight:%d\t, stu.sex:%d\t, stu.height:%d\t, stu.name:%s\n", buffer[1].age, buffer[1].height, buffer[1].sex, buffer[1].weight, buffer[1].name);
 #endif
 
-#if 0
+#if 1
     // 结构体指针
     stu.age = 10;
     stu.weight = 50;
@@ -139,7 +138,7 @@ int main()
     printf("info.age:%d\n", stu.age);
 #endif
 
-#if 0
+#if 1
     // 5.结构体数组
     // 数组：
     //   1.一块连续的内存地址

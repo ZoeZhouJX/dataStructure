@@ -1,7 +1,11 @@
 #ifndef __DYNAMIC_ARRAY_H_
 #define __DYNAMIC_ARRAY_H_
 
-typedef  ELEMENTTYPE;
+#if 1
+#define ELEMENTTYPE void*
+#else
+typedef void * ELEMENTTYPE;
+#endif
 //避免头文件重复包含
 typedef struct dynamicArray
 {
@@ -31,7 +35,7 @@ int dynamicArrayDeleteData(dynamicArray *pArray);
 int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos);
 
 //动态数组删除指定的元素
-int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val);
+int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2));
 
 // 动态数组的销毁
 int dynamicArrayDestroy(dynamicArray *pArray);
@@ -44,5 +48,8 @@ int dynamicArrayGetCapacity(dynamicArray *pArray, int *pCapacity);
 
 //获取指定位置的元素数据
 int dynamicArrayGetAppointPosVal(dynamicArray *pArray, int pos, ELEMENTTYPE *pVal);
+
+//数组排序
+int dynamicArrayAppointWaySort(dynamicArray *pArray, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2));
 
 #endif //__DYNAMIC_ARRAY_H_
