@@ -367,3 +367,20 @@ int DoubleLinkListForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENTTYPE))
 
     return ON_SUCCESS;
 }
+
+// 双向链表的逆序打印
+int DoubleLinkListReverseForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENTTYPE))
+{
+    if (pList == NULL)
+    {
+        return NULL_PTR;
+    }
+
+    DoubleLinkNode *travelNode = pList->tail;
+    while(travelNode != pList->head)
+    {
+        printFunc(travelNode->data);
+        travelNode = travelNode->prev;
+    }
+    return ON_SUCCESS;
+}
