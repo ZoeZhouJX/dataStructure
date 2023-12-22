@@ -184,9 +184,10 @@ int DoubleLinkListTailDelete(DoubleLinkList *pList)
     return DoubleLinkListDeleteAppointPos(pList, pList->len);
 }
 
-// 链表指定位置删
-int DoubleLinkListDeleteAppointPos(DoubleLinkList *pList, int pos)
+/* 链表指定位置删 */
+int DoubleLinkListDelAppointPos(DoubleLinkList *pList, int pos)
 {
+    int ret = 0;
     if (pList == NULL)
     {
         return NULL_PTR;
@@ -200,43 +201,41 @@ int DoubleLinkListDeleteAppointPos(DoubleLinkList *pList, int pos)
 #if 1
     DoubleLinkNode *travelNode = pList->head;
 #else
-    DoubleLinkNode *travelNode = pList->head->next;
+    DoubleLinkNode *travelNOde = pList->head->next;
 #endif
-
-    int flag = 0;
-    // 需要修改尾指针
+    DoubleLinkNode *needDelNode = NULL;
+    /* 需要修改尾指针 */
     if (pos == pList->len)
     {
-        // 需要修改尾指针
-        flag = 1;
+        /* 备份尾指针 */
+        DoubleLinkNode *tmpNode = pList->tail;
+        /* 移动尾指针 */
+        pList->tail = pList->tail->prev;
+        needDelNode = tmpNode;
     }
-    DoubleLinkNode *needDelNode = NULL;
-    while (--pos)
+    else
     {
-        // 向后移动位置
-        travelNode = travelNode->next;
-    }
-    // 跳出循环找到的是哪一个结点
-    needDelNode = travelNode->next;
-    travelNode->next = needDelNode->next;
-
-    if (flag)
-    {
-        // 调整尾指针
-        pList->tail = travelNode;
+        while (--pos)
+        {
+            /* 向后移动位置 */
+            travelNode = travelNode->next;
+        }
+        // 跳出循环找到的是哪一个结点？
+        needDelNode = travelNode->next;       // 1
+        travelNode->next = needDelNode->next; // 2
+        needDelNode->next->prev = travelNode; // 3
     }
 
-    // 释放内存
+    /* 释放内存 */
     if (needDelNode != NULL)
     {
         free(needDelNode);
         needDelNode = NULL;
     }
 
-    // 链表长度减一
+    /* 链表长度减一 */
     (pList->len)--;
-
-    return ON_SUCCESS;
+    return ret;
 }
 
 // 根据指定的元素得到在链表中所在的位置
