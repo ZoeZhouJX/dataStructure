@@ -1,11 +1,15 @@
 #ifndef __DoubleLinkList_QUEUE_H_
 #define __DoubleLinkList_QUEUE_H_
 
+#include "doubleLinkList.h"
+
+typedef DoubleLinkList DoubleLinkListQueue;
+
 /* 队列初始化 */
-int doubleLinkListQueueInit();
+int doubleLinkListQueueInit(DoubleLinkListQueue *pQueue);
 
 /* 队列入队 */
-int doubleLinkListQueuePush();
+int doubleLinkListQueuePush(DoubleLinkListQueue *pQueue, ELEMENTTYPE val);
 
 /* 队头元素 */
 int doubleLinkListQueueTop();
