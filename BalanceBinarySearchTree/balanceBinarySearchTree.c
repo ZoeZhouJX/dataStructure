@@ -13,8 +13,9 @@ enum STATUS_CODE
     INVALID_ACCESS,
 };
 
-#define true  1
+#define true 1
 #define false 0
+
 /* 静态函数前置声明 */
 
 /* 两个值比较大小 */
@@ -45,19 +46,22 @@ static int balanceBinarySearchTreeDeleteNode(BalanceBinarySearchTree *pBstree, A
 static int insertNodeAfter(BalanceBinarySearchTree *pBstree, AVLTreeNode *node);
 /* 计算结点的平衡因子 */
 static int AVLTreeNodeBalanceFactor(AVLTreeNode *node);
-/* 判断结点是否平衡 */
+/* 判断结果是否平衡 */
 static int AVLTreeNodeIsBalanced(AVLTreeNode *node);
-/* 更新结点的高度 */
-static int AVLTreeNodeUpdataHeight(AVLTreeNode *node);
+/* 更新结点的高度. */
+static int AVLTreeNodeUpdateHeight(AVLTreeNode *node);
 /* AVL树结点调整平衡 */
 static int AVLTreeNodeAdjustBalance(BalanceBinarySearchTree *pBstree, AVLTreeNode *node);
 /* 获取AVL结点较高的子结点 */
 static AVLTreeNode *AVLTreeNodeGetChildTaller(AVLTreeNode *node);
 /* 当前结点是父结点的左子树 */
-static int AVLTreeNodeCurrentNodeIsLeft(AVLTreeNode *node);
+static int AVLTreeCurrentNodeIsLeft(AVLTreeNode *node);
 /* 当前结点是父结点的右子树 */
-static int AVLTreeNodeCurrentNodeIsRight(AVLTreeNode *node);
-
+static int AVLTreeCurrentNodeIsRight(AVLTreeNode *node);
+/* 左旋 */
+static int AVLTreeCurrentNodeRotateLeft(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand);
+/* 右旋 */
+static int AVLTreeCurrentNodeRotateRight(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand);
 
 /* 二叉搜索树的初始化 */
 int balanceBinarySearchTreeInit(BalanceBinarySearchTree **pBstree, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2), int (*printFunc)(ELEMENTTYPE val))
@@ -113,34 +117,35 @@ int balanceBinarySearchTreeInit(BalanceBinarySearchTree **pBstree, int (*compare
 }
 
 /* 当前结点是父结点的左子树 */
-static int AVLTreeNodeCurrentNodeIsLeft(AVLTreeNode *node)
+static int AVLTreeCurrentNodeIsLeft(AVLTreeNode *node)
 {
     return (node->parent != NULL) && (node == node->parent->left);
 }
+
 /* 当前结点是父结点的右子树 */
-static int AVLTreeNodeCurrentNodeIsRight(AVLTreeNode *node)
+static int AVLTreeCurrentNodeIsRight(AVLTreeNode *node)
 {
     return (node->parent != NULL) && (node == node->parent->right);
 }
 
 /* 计算结点的平衡因子 */
+/* 左子树 - 右子树 */
 static int AVLTreeNodeBalanceFactor(AVLTreeNode *node)
 {
     /* 左子树的高度 */
     int leftHeight = node->left == NULL ? 0 : node->left->height;
-
     /* 右子树的高度 */
     int rightHeight = node->right == NULL ? 0 : node->right->height;
 
     return leftHeight - rightHeight;
 }
 
-/* 判断结点是否平衡 */
+/* 判断结果是否平衡 */
 static int AVLTreeNodeIsBalanced(AVLTreeNode *node)
 {
-    #if 0
+#if 0
     return abs(AVLTreeNodeBalanceFactor(node)) <= 1;
-    #else
+#else
     int nodeFactor = abs(AVLTreeNodeBalanceFactor(node));
     if (nodeFactor <= 1)
     {
@@ -150,15 +155,16 @@ static int AVLTreeNodeIsBalanced(AVLTreeNode *node)
     {
         return false;
     }
-    #endif
+#endif
 }
 
 static int tmpMax(int val1, int val2)
 {
     return val1 - val2 >= 0 ? val1 : val2;
 }
-/* 更新结点的高度 */
-static int AVLTreeNodeUpdataHeight(AVLTreeNode *node)
+
+/* 更新结点的高度. */
+static int AVLTreeNodeUpdateHeight(AVLTreeNode *node)
 {
     /* 左子树的高度 */
     int leftHeight = node->left == NULL ? 0 : node->left->height;
@@ -280,11 +286,11 @@ static int compareFunc(ELEMENTTYPE val1, ELEMENTTYPE val2)
 #endif
 
 /* 获取AVL结点较高的子结点 */
-static AVLTreeNode * AVLTreeNodeGetChildTaller(AVLTreeNode *node)
+static AVLTreeNode *AVLTreeNodeGetChildTaller(AVLTreeNode *node)
 {
-    /* 左子树的高度 */
+    /* 左子树高度 */
     int leftHeight = node->left == NULL ? 0 : node->left->height;
-    /* 右子树的高度 */
+    /* 右子树高度 */
     int rightHeight = node->right == NULL ? 0 : node->right->height;
     if (leftHeight > rightHeight)
     {
@@ -297,17 +303,100 @@ static AVLTreeNode * AVLTreeNodeGetChildTaller(AVLTreeNode *node)
     else
     {
         /* leftHeight == rightHeight */
-        if (AVLTreeNodeCurrentNodeIsLeft(node))
+        if (AVLTreeCurrentNodeIsLeft(node))
         {
             return node->left;
         }
-        else if (AVLTreeNodeCurrentNodeIsRight(node))
+        else if (AVLTreeCurrentNodeIsRight(node))
         {
             return node->right;
         }
     }
-    
 }
+
+/* 左旋: RR */
+static int AVLTreeCurrentNodeRotateLeft(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand)
+{
+    int ret = 0;
+
+    AVLTreeNode *parent = grand->right;
+    AVLTreeNode *child = parent->left;
+
+    grand->right = child;
+    parent->left = grand;
+
+    parent->parent = grand->parent;
+
+    if (AVLTreeCurrentNodeIsLeft(grand))
+    {
+        grand->parent->left = parent;
+    }
+    else if (AVLTreeCurrentNodeIsRight(grand))
+    {
+        grand->parent->right = parent;
+    }
+    else
+    {
+        pBstree->root = parent;
+    }
+
+    grand->parent = parent;
+
+    if (child != NULL)
+    {
+        child->parent = grand;
+    }
+
+    /* 更新高度 */
+    /* 先更新低的结点 */
+    AVLTreeNodeUpdateHeight(grand);
+    AVLTreeNodeUpdateHeight(parent);
+
+    return ret;
+}
+
+/* 右旋: LL */
+static int AVLTreeCurrentNodeRotateRight(BalanceBinarySearchTree *pBstree, AVLTreeNode *grand)
+{
+    int ret = 0;
+
+    AVLTreeNode *parent = grand->left;
+    AVLTreeNode *child = parent->right;
+
+    grand->left = child;   // 1
+    parent->right = grand; // 2
+
+    /* p成为新的根结点 */
+    parent->parent = grand->parent; // 3
+
+    if (AVLTreeCurrentNodeIsLeft(grand))
+    {
+        grand->parent->left = parent; // 4
+    }
+    else if (AVLTreeCurrentNodeIsRight(grand))
+    {
+        grand->parent->right = parent; // 4
+    }
+    else
+    {
+        /* p 成为树的根结点 */
+        pBstree->root = parent; // 4
+    }
+    grand->parent = parent; // 5
+
+    if (child != NULL)
+    {
+        child->parent = grand; // 6
+    }
+
+    /* 更新高度 */
+    /* 先更新低的结点 */
+    AVLTreeNodeUpdateHeight(grand);
+    AVLTreeNodeUpdateHeight(parent);
+
+    return ret;
+}
+
 /* AVL树结点调整平衡 */
 /* node一定是最低的不平衡结点 */
 static int AVLTreeNodeAdjustBalance(BalanceBinarySearchTree *pBstree, AVLTreeNode *node)
@@ -317,44 +406,48 @@ static int AVLTreeNodeAdjustBalance(BalanceBinarySearchTree *pBstree, AVLTreeNod
     AVLTreeNode *child = AVLTreeNodeGetChildTaller(parent);
 
     /* L */
-    if (AVLTreeNodeCurrentNodeIsLeft(parent))
+    if (AVLTreeCurrentNodeIsLeft(parent))
     {
-        if (AVLTreeNodeCurrentNodeIsLeft(child))
+        if (AVLTreeCurrentNodeIsLeft(child))
         {
-            /* LL */
+            /* LL - 右旋 */
+            AVLTreeCurrentNodeRotateRight(pBstree, node);
         }
-        else if (AVLTreeNodeCurrentNodeIsRight(child))
+        else if (AVLTreeCurrentNodeIsRight(child))
         {
             /* LR */
+            AVLTreeCurrentNodeRotate();
         }
     }
     else
     {
         /* R */
-        if (AVLTreeNodeCurrentNodeIsLeft(child))
+        if (AVLTreeCurrentNodeIsLeft(child))
         {
             /* RL */
+            AVLTreeCurrentNodeRotate();
         }
-        else if (AVLTreeNodeCurrentNodeIsRight(child))
+        else if (AVLTreeCurrentNodeIsRight(child))
         {
             /* RR */
+            AVLTreeCurrentNodeRotateLeft(pBstree, node);
         }
     }
 }
 
 /* 添加结点之后的操作. */
-/* 添加的结点一定是叶子结点 */
+/* 新添加的结点一定是叶子结点 */
 static int insertNodeAfter(BalanceBinarySearchTree *pBstree, AVLTreeNode *node)
 {
     int ret = 0;
     /* todo... */
-    while ( (node = node->parent) != NULL)
+    while ((node = node->parent) != NULL)
     {
-        /* 程序执行到这里面的时候，一定不止一个结点 */
+        /* 程序执行到这里面的时候, 一定不止一个结点. */
         if (AVLTreeNodeIsBalanced(node))
         {
-            /* 如果结点是平衡的 那就更新高度 */
-            AVLTreeNodeUpdataHeight(node);
+            /* 如果结点是平衡的. 那就更新高度. */
+            AVLTreeNodeUpdateHeight(node);
         }
         else
         {
@@ -362,11 +455,13 @@ static int insertNodeAfter(BalanceBinarySearchTree *pBstree, AVLTreeNode *node)
             /* 调整平衡 */
             AVLTreeNodeAdjustBalance(pBstree, node);
 
-            /* 调整完最低的不平衡结点，上面的不平衡结点就已经平衡了 */
+            /* 调整完最低的不平衡结点, 上面的不平衡结点就已经平衡. */
             break;
         }
     }
-    
+    /* 更新高度... */
+
+    /* 调整平衡... */
     return ret;
 }
 
@@ -617,7 +712,7 @@ int balanceBinarySearchTreeGetHeight(BalanceBinarySearchTree *pBstree, int *pHei
     {
         return NULL_PTR;
     }
-    #if 0
+#if 0
     /* 判断是否为空树 */
     if (pBstree->size == 0)
     {
@@ -625,7 +720,7 @@ int balanceBinarySearchTreeGetHeight(BalanceBinarySearchTree *pBstree, int *pHei
     }
     *pHeight = pBstree->root->height;
     return pBstree->root->height;
-    #else
+#else
     /* 判断是否为空树 */
     if (pBstree->size == 0)
     {
@@ -672,7 +767,7 @@ int balanceBinarySearchTreeGetHeight(BalanceBinarySearchTree *pBstree, int *pHei
 
     /* 释放队列的空间 */
     doubleLinkListQueueDestroy(pQueue);
-    #endif
+#endif
     return ret;
 }
 
