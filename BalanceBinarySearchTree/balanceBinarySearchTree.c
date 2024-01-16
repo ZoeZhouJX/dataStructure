@@ -78,7 +78,9 @@ int balanceBinarySearchTreeInit(BalanceBinarySearchTree **pBstree, int (*compare
     memset(bstree, 0, sizeof(BalanceBinarySearchTree) * 1);
     /* 初始化树 */
     {
+        /* 树的根结点置为NULL */
         bstree->root = NULL;
+        /* 树的结点个数为0 */
         bstree->size = 0;
 
         /* 钩子函数在这边赋值. */
@@ -87,33 +89,6 @@ int balanceBinarySearchTreeInit(BalanceBinarySearchTree **pBstree, int (*compare
         bstree->printFunc = printFunc;
     }
 
-#if 0
-    /* 分配根结点 */
-    bstree->root = (AVLTreeNode *)malloc(sizeof(AVLTreeNode) * 1);
-    if (bstree->root == NULL)
-    {
-        return MALLOC_ERROR;
-    }
-    /* 清除脏数据 */
-    memset(bstree->root, 0, sizeof(AVLTreeNode) * 1);
-    /* 初始化根结点 */
-    {
-        bstree->root->data = 0;
-        bstree->root->left = NULL;
-        bstree->root->right = NULL;
-        bstree->root->parent = NULL;
-    }
-#else
-    bstree->root = createAVLTreeNewNode(0, NULL);
-    if (bstree->root == NULL)
-    {
-        return MALLOC_ERROR;
-    }
-#endif
-
-#if 0
-    doubleLinkListQueueInit(&(bstree->pQueue));
-#endif
     *pBstree = bstree;
     return ret;
 }
@@ -540,12 +515,12 @@ int balanceBinarySearchTreeInsert(BalanceBinarySearchTree *pBstree, ELEMENTTYPE 
 {
     int ret = 0;
 
-    /* 空树 */
-    if (pBstree->size == 0)
+    /* 如果是空树 */
+    if (pBstree->root == NULL)
     {
+        pBstree->root = createAVLTreeNewNode(val, NULL);
         /* 更新树的结点 */
         (pBstree->size)++;
-        pBstree->root->data = val;
         insertNodeAfter(pBstree, pBstree->root);
         return ret;
     }
@@ -782,25 +757,17 @@ int balanceBinarySearchTreeGetHeight(BalanceBinarySearchTree *pBstree, int *pHei
     {
         return NULL_PTR;
     }
-#if 0
-    /* 判断是否为空树 */
-    if (pBstree->size == 0)
-    {
-        return 0;
-    }
-    *pHeight = pBstree->root->height;
-    return pBstree->root->height;
-#else
-    /* 判断是否为空树 */
-    if (pBstree->size == 0)
-    {
-        return 0;
-    }
+
     int ret;
+    /* 判断是否为空树 */
+    if (pBstree->root == NULL)
+    {
+        return 0;
+    }
     DoubleLinkListQueue *pQueue = NULL;
     doubleLinkListQueueInit(&pQueue);
 
-    doubleLinkListQueuePush(pQueue, pBstree->root);
+    doubleLinkListQueuePush(pQueue, (void *)(pBstree->root));
     /* 树的高度 (根结点入队高度为) */
     int height = 0;
     /* 树每一层的结点数量 */
@@ -810,6 +777,7 @@ int balanceBinarySearchTreeGetHeight(BalanceBinarySearchTree *pBstree, int *pHei
     while (!doubleLinkListQueueIsEmpty(pQueue))
     {
         doubleLinkListQueueTop(pQueue, (void **)&travelNode);
+        pBstree->printFunc(travelNode->data);
         doubleLinkListQueuePop(pQueue);
         levelSize--;
 
@@ -837,7 +805,7 @@ int balanceBinarySearchTreeGetHeight(BalanceBinarySearchTree *pBstree, int *pHei
 
     /* 释放队列的空间 */
     doubleLinkListQueueDestroy(pQueue);
-#endif
+    
     return ret;
 }
 

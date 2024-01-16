@@ -1,6 +1,5 @@
 #ifndef __DoubleLinkList_H_
 #define __DoubleLinkList_H_
-
 #include "common.h"
 
 /* 链表初始化 */

@@ -1,7 +1,7 @@
 #ifndef __COMMON_H_
 #define __COMMON_H_
 
-#define ELEMENTTYPE void *
+#define ELEMENTTYPE void*
 
 /* 链表结点取别名 */
 typedef struct DoubleLinkNode
@@ -24,4 +24,4 @@ typedef struct DoubleLinkList
     int len;
 } DoubleLinkList;
 
-#endif //__COMMON_H_
+#endif
