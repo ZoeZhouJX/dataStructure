@@ -26,9 +26,9 @@ int printBasicData(void *arg)
 
 int main()
 {
-    LinkList *list = NULL;
+    DoubleLinkList *list = NULL;
     // 初始化链表
-    LinkListInit(&list);
+    DoubleLinkListInit(list);
 
 #if 0
     //插入数据

@@ -223,7 +223,16 @@ int DoubleLinkListDelAppointPos(DoubleLinkList *pList, int pos)
         // 跳出循环找到的是哪一个结点？
         needDelNode = travelNode->next;       // 1
         travelNode->next = needDelNode->next; // 2
-        needDelNode->next->prev = travelNode; // 3
+        if (needDelNode->next != NULL)
+        {
+            needDelNode->next->prev = travelNode; // 3
+        }
+        else
+        {
+            /* 这种问题是只有一个结点, 把这个结点删除之后也需要改动尾指针. */
+            /* 移动尾指针 */
+            pList->tail = pList->tail->prev;
+        }
     }
 
     /* 释放内存 */
@@ -376,11 +385,15 @@ int DoubleLinkListReverseForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENT
         return NULL_PTR;
     }
 
+    /* 标记到尾指针 */
     DoubleLinkNode *travelNode = pList->tail;
     while(travelNode != pList->head)
     {
+        /* 包装器 . 钩子🪝 . 回调函数 */
         printFunc(travelNode->data);
+        /* 移动前指针 */
         travelNode = travelNode->prev;
     }
     return ON_SUCCESS;
 }
+

@@ -60,4 +60,5 @@ int DoubleLinkListForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENTTYPE));
 
 //双向链表的逆序打印
 int DoubleLinkListReverseForeach(DoubleLinkList *pList, int (*printFunc)(ELEMENTTYPE));
+
 #endif
