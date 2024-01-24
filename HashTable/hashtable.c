@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "doubleLinkList.h"
 #include <error.h>
+#include <stdlib.h>
 
 #define DEFAULT_SLOT_NUMS 10
 

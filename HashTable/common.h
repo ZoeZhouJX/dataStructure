@@ -24,4 +24,14 @@ typedef struct DoubleLinkList
     int len;
 } DoubleLinkList;
 
+/* 状态码 */
+enum STATUS_CODE
+{
+    NOT_FIND = -1,
+    ON_SUCCESS,
+    NULL_PTR,
+    MALLOC_ERROR,
+    INVALID_ACCESS,
+};
+
 #endif //__COMMON_H_

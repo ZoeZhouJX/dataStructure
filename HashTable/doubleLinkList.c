@@ -3,16 +3,6 @@
 #include <string.h>
 #include <stdio.h>
 
-/* 状态码 */
-enum STATUS_CODE
-{
-    NOT_FIND = -1,
-    ON_SUCCESS,
-    NULL_PTR,
-    MALLOC_ERROR,
-    INVALID_ACCESS,
-};
-
 /* 静态函数只在本源文件(.c)使用 */
 /* 静态前置声明 */
 static int DoubleLinkListAccordAppointValGetPos(DoubleLinkList *pList, ELEMENTTYPE val, int *pPos, int (*compareFunc)(ELEMENTTYPE, ELEMENTTYPE));
