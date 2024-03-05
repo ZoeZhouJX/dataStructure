@@ -36,7 +36,7 @@ int dynamicArrayInit(dynamicArray *pArray, int capacity)
 {
     JUDGING_EMPTINESS(pArray);
 
-    if (capacity < 0)
+    if (capacity <= 0)
     {
         capacity = DEFAULT_SIZE;
     }
@@ -108,13 +108,13 @@ int dynamicArrayAppointPosInsertData(dynamicArray *pArray, int pos, ELEMENTTYPE 
     return ON_SUCCESS;
 }
 
-// 动态数组插入数据(默认插到数组的末尾)
+//动态数组插入数据(默认插到数组的末尾)
 int dynamicArrayInsertData(dynamicArray *pArray, ELEMENTTYPE val)
 {
     return dynamicArrayAppointPosInsertData(pArray, pArray->len, val);
 }
 
-// 动态数组修改指定位置的数据
+//动态数组修改指定位置的数据
 int dynamicArrayModifyAppointPosData(dynamicArray *pArray, int pos, ELEMENTTYPE val)
 {
     JUDGING_EMPTINESS(pArray);
@@ -126,7 +126,7 @@ int dynamicArrayModifyAppointPosData(dynamicArray *pArray, int pos, ELEMENTTYPE 
     return ON_SUCCESS;
 }
 
-// 动态数组缩容
+//动态数组缩容
 static int shrinkDynamicCapacity(dynamicArray *pArray)
 {
     int needShrinkDynamicCapacity = pArray->capacity - (pArray->capacity >> 1);
@@ -153,8 +153,8 @@ static int shrinkDynamicCapacity(dynamicArray *pArray)
 
 }
 
-// 动态数组删除指定位置数据
-int dynamicArrayDeleteAppointData(dynamicArray *pArray, int pos)
+//动态数组删除指定位置数据
+int dynamicArrayDeleteAppointPosData(dynamicArray *pArray, int pos)
 {
     JUDGING_EMPTINESS(pArray);
 
@@ -177,3 +177,79 @@ int dynamicArrayDeleteAppointData(dynamicArray *pArray, int pos)
 }
 
 //动态数组删除数据（默认情况下删除最后末尾的数据）
+int dynamicArrayDeletedata(dynamicArray *pArray)
+{
+    return dynamicArrayDeleteAppointPosData(pArray, pArray->len - 1);
+}
+
+int compareData(void *arg1, void *arg2)
+{
+    int num1 = *(int *)arg1;
+    int num2 = *(int *)arg2;
+
+    return num1 == num2 ? 1 : 0;
+}
+
+//动态数组删除指定的元素
+int dynamicArrayDeleteAppointData(dynamicArray *pArray, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE val1, ELEMENTTYPE val2))
+{
+    for (int idx = pArray->len - 1; idx >= 0; idx--)
+    {
+        int ret = compareFunc(val, pArray->data[idx]);
+        if (ret == 1)
+        dynamicArrayDeleteAppointPosData(pArray, idx);
+    }
+    return ON_SUCCESS;
+}
+
+//动态数组的销毁
+int dynamicArrayDestroy(dynamicArray *pArray)
+{
+    JUDGING_EMPTINESS(pArray);
+
+    if (pArray->data != NULL)
+    {
+        free(pArray->data);
+        pArray->data = NULL;
+    }
+
+    return ON_SUCCESS;
+}
+
+//获取数组的大小
+int dynamicArrayGetSize(dynamicArray *pArray, int *pSize)
+{
+    JUDGING_EMPTINESS(pArray);
+
+    if (pSize != NULL)
+    {
+        *pSize = pArray->len;
+    }
+    return ON_SUCCESS;
+}
+
+//获取数组的容量
+int dynamicArrayGetCapacity(dynamicArray *pArray, int *pCapacity)
+{
+    JUDGING_EMPTINESS(pArray);
+
+    if (pCapacity != NULL)
+    {
+        *pCapacity = pArray->capacity;
+    }
+    return ON_SUCCESS;
+}
+
+//获取指定位置的元素数据
+int dynamicArrayGetAppointPosVal(dynamicArray *pArray, int pos, ELEMENTTYPE *pVal)
+{
+    JUDGING_EMPTINESS(pArray);
+    JUDGING_LEGITIMACY(pArray);
+
+    if (pVal)
+    {
+        *pVal = pArray->data[pos];
+    }
+
+    return ON_SUCCESS;
+}

@@ -46,7 +46,7 @@ int LinkListTailDelete(LinkList *pList);
 int LinkListDeleteAppointPos(LinkList *pList, int pos);
 
 //链表删除指定的数据
-int LinkListDeleteAppointData(LinkList *pList, ELEMENTTYPE val);
+int LinkListDeleteAppointData(LinkList *pList, ELEMENTTYPE val, int (*compareFunc)(ELEMENTTYPE, ELEMENTTYPE));
 
 //获取链表的长度
 int LinkListGetLength(LinkList *pList, int *pSize);
